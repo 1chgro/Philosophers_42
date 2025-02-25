@@ -48,9 +48,10 @@ typedef struct mutxx
 
 void *printhell(void *v)
 {
-    pthread_mutex_lock(v);
+    pthread_mutex_t *mutx = (pthread_mutex_t *)v;
+    pthread_mutex_lock(mutx);
     printf("hello\n");
-    // pthread_mutex_unlock(v);
+    pthread_mutex_unlock(mutx);
     return (void *)10;
 }
 
@@ -61,16 +62,13 @@ int main()
     pthread_t id;
     t_mutx *locks;
     locks = malloc(sizeof(t_mutx));
-    pthread_mutex_t lock;
-    locks->lock = lock;
-
+    pthread_mutex_init(&locks->lock, NULL);
     
-    pthread_mutex_init(&lock, NULL);
-    pthread_create(&id, NULL, printhell, &lock);
+    pthread_create(&id, NULL, printhell, &locks->lock);
     pthread_join(id, &res);
-    pthread_create(&id, NULL, printhell, &lock);
+    pthread_create(&id, NULL, printhell, &locks->lock);
     pthread_join(id, &res);
     printf("%ld\n", (long )res);
-    pthread_mutex_destroy(&lock);
+    pthread_mutex_destroy(&locks->lock);
     return (0);
 }
