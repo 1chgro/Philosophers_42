@@ -1,74 +1,24 @@
 #include "philo.h"
 
-// int k = 0;
-// void *printhello(void *m1)
-// {
-//     pthread_mutex_t **m = (pthread_mutex_t **)m1;
-//     pthread_mutex_t *m_l;
-//     pthread_mutex_t *m_l1;
-//     m_l = m[0];
-//     m_l1 = m[1];
 
-//     for (size_t i = 0; i < 1000000; i++)
-//     {
-//         pthread_mutex_lock(m_l1);
-//         pthread_mutex_lock(m_l);
-//             k++;
-//         pthread_mutex_unlock(m_l);
-//         pthread_mutex_unlock(m_l1);
-//     }
-//     return ((void*)101);
-// }
 
-// int main()
-// {
-//     pthread_t id1, id2;
-//     pthread_mutex_t lock;
-//     pthread_mutex_t lock2;
-//     void *p[2];
-
-//     pthread_mutex_init(&lock, NULL);
-//     pthread_mutex_init(&lock2, NULL);
-//     p[0] = &lock;
-//     p[1] = &lock2;
-//     pthread_create(&id1, NULL, printhello, p);
-//     pthread_create(&id2, NULL, printhello, p);
-//     pthread_join(id1, NULL);
-//     pthread_join(id2, NULL);
-//     printf("%d\n", k);
-//     return 0;
-// }
-
-typedef struct mutxx
+int main(int ac, char **av)
 {
-    pthread_mutex_t lock;
-    pthread_mutex_t lock2;
-}t_mutx;
+    int num_of_philosophers = 0;
+    int time_to_die= 0;
+    int time_to_eat= 0;
+    int time_to_sleep= 0;
+    int num_of_time_phil_must_eat= 0;
+    if (ac != 6)
+    {
+        printf("Error in args\n");
+        return (1);
+    }
 
+    num_of_philosophers = atoi(av[1]);
+    time_to_die = atoi(av[2]);
+    time_to_eat = atoi(av[3]);
+    time_to_sleep = atoi(av[4]);
+    num_of_time_phil_must_eat = atoi(av[5]);
 
-void *printhell(void *v)
-{
-    pthread_mutex_t *mutx = (pthread_mutex_t *)v;
-    pthread_mutex_lock(mutx);
-    printf("hello\n");
-    pthread_mutex_unlock(mutx);
-    return (void *)10;
-}
-
-
-int main()
-{
-    void *res = NULL;
-    pthread_t id;
-    t_mutx *locks;
-    locks = malloc(sizeof(t_mutx));
-    pthread_mutex_init(&locks->lock, NULL);
-    
-    pthread_create(&id, NULL, printhell, &locks->lock);
-    pthread_join(id, &res);
-    pthread_create(&id, NULL, printhell, &locks->lock);
-    pthread_join(id, &res);
-    printf("%ld\n", (long )res);
-    pthread_mutex_destroy(&locks->lock);
-    return (0);
 }

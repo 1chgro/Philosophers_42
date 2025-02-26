@@ -1,14 +1,17 @@
 NAME=philo
 
-FLAGS = -Werror -Wall -Wextra -fsanitize=thread -g
+FLAGS = -pthread -fsanitize=thread -g
 
 SRCS=philo.c
 
 OBJS= $(SRCS:.c=.o)
 
+
 NAME: $(OBJS)
-	@cc $(FLAGS) -pthread $(OBJS) -o $(NAME)
+	@cc $(FLAGS) $(OBJS) -o $(NAME)
 	@echo "Done: excutable is ready"
+
+all: $(NAME)
 
 %.o:%.c
 	@cc $(FLAGS) -c $< -o $@
@@ -21,3 +24,5 @@ fclean: clean
 	@rm -rf $(NAME)
 	@echo "Done:removing excutable"
 
+
+re: fclean all
