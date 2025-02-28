@@ -2,7 +2,7 @@ NAME=philo
 
 FLAGS = -pthread -fsanitize=thread -g
 
-SRCS=philo.c
+SRCS=philo.c philo_utils.c
 
 OBJS= $(SRCS:.c=.o)
 

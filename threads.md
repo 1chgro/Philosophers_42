@@ -10,7 +10,7 @@ Process
 |-- Thread 2 (Registers, Stack, PC)
 |-- Thread 3 (Registers, Stack, PC)
 
-(All share Code, Heap, and Open Files)
+(All share Code, Heap, signals and Open Files)
 
 ## Key Concepts
 - **Threads vs. Processes**: Threads share memory; processes have separate memory spaces.
