@@ -120,3 +120,17 @@ __example__:
 - it moves to running when the scheduler assigns CPU time.
 - it enters blocked when waiting for I/O or synchronizaton.
 - it transitions to terminated when it completes execution or is stopped.
+## user-level threads:
+- Managed entirely in user space without kernel involvement.
+_Advantages_:
+    Faster creation and context switching.
+    No kernel overhead.
+_Disadvantages_:
+  - Cannot take advantage of multiple CPUs.
+    - Since the kernel only sees one process, it schedules it as a single entity on one CPU core.
+    - Even if multiple threads exist inside the process, they cannot run in parallel on multiple CPU cores.
+  - Blocking system calls block the entire process.
+
+
+[!] see context switching.
+[!] overhead.
