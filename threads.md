@@ -87,8 +87,36 @@ int main() {
 
 ## Summary
 Threads in C enable concurrent execution but require careful synchronization to ensure data consistency and avoid common pitfalls like race conditions and deadlocks.
+---------------------------
+-----------------------------------------------------
 
 
+# threads:
+- ! threads share the same memory resources of the process they belong to but execute independently.
+- ! each thread has its own program counter, stack and registers.
+- ! threads within the same process share the same address space, global variables, heap, and code.
 
 
-((i + 1) % numberof philosophers);
+## Why multi-threading?:
+
+- theads allow multiple tasks to run simultaneously.
+- they share the same memory and resources, reducing duplication.
+- simplify the design of apps that perfoem multi tasks.
+__example__: 
+  - a web server can handle multiple client requests using threads.
+  - a gui app: keep the ui responsive while performing background tasks.
+
+## thread lifecycle:
+### states of threads:
+
+- new: created but not yet started.
+- runnable: ready to run but waiting for cpu time.
+- running: activeely executing instructions.
+- blocked/waiting: waiting for a resource or event.
+- terminated: the thread has finished execution.
+### transition between states:
+
+- A thread transitions from New to Runnable when pthread_create() is called.
+- it moves to running when the scheduler assigns CPU time.
+- it enters blocked when waiting for I/O or synchronizaton.
+- it transitions to terminated when it completes execution or is stopped.

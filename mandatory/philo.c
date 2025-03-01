@@ -58,7 +58,7 @@ void init_philos(t_table *table)
 }
 
 
-void init_all(char **av, t_table *table)
+void init(char **av, t_table *table)
 {
 	init_args(av, table);
 	init_forks(table);
@@ -78,7 +78,7 @@ int main(int ac, char **av)
 		return (ft_putstr_fd("Error: Wrong num of args\n", 2), 1);
 	if (!check_input(av))
 		return (1);
-	init_all(av, &table);
+	init(av, &table);
 
 
 	return (0);
