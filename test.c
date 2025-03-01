@@ -70,6 +70,7 @@ int main()
     pthread_create(&id2, NULL, printhell, &locks->lock2);
     pthread_join(id, &res);
     pthread_join(id2, &res);
+    // pthread_detach(id2);
     printf("%ld\n", (long )res);
     pthread_mutex_destroy(&locks->lock);
     pthread_mutex_destroy(&locks->lock2);

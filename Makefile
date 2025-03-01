@@ -2,18 +2,18 @@ NAME=philo
 
 FLAGS = -pthread -fsanitize=thread -g
 
-SRCS=philo.c philo_utils.c
+SRCS=mandatory/philo.c mandatory/philo_utils.c mandatory/parse.c
 
 OBJS= $(SRCS:.c=.o)
 
 
-NAME: $(OBJS)
+NAME: $(OBJS) mandatory/philo.h
 	@cc $(FLAGS) $(OBJS) -o $(NAME)
 	@echo "Done: excutable is ready"
 
 all: $(NAME)
 
-%.o:%.c
+%.o:%.c 
 	@cc $(FLAGS) -c $< -o $@
 
 clean:

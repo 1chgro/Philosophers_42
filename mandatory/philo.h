@@ -10,7 +10,8 @@
 
 void	ft_putstr_fd(char *s, int fd);
 int	ft_atoi(const char *str);
-
-
+int	valid_arg(char *s);
+int	parse_arg(char *s);
+int	check_input(char **s);
 
 #endif
