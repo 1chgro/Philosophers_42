@@ -1,4 +1,4 @@
-#include "philo.h"
+#include "mandatory/philo.h"
 
 // int k = 0;
 // void *printhello(void *m1)

@@ -87,3 +87,8 @@ int main() {
 
 ## Summary
 Threads in C enable concurrent execution but require careful synchronization to ensure data consistency and avoid common pitfalls like race conditions and deadlocks.
+
+
+
+
+((i + 1) % numberof philosophers);
