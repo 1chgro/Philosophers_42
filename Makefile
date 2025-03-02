@@ -8,7 +8,7 @@ OBJS= $(SRCS:.c=.o)
 
 
 NAME: $(OBJS) mandatory/philo.h
-	@cc $(FLAGS) $(OBJS) -o $(NAME)
+	@cc $(FLAGS) $( OBJS) -o $(NAME)
 	@echo "Done: excutable is ready"
 
 all: $(NAME)
