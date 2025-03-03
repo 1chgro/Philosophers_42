@@ -15,9 +15,17 @@ int	valid_arg(char *s)
 
 int	parse_arg(char *s)
 {
-	if (!valid_arg(s) || ft_atoi(s) == -1 || ft_atoi(s) == 0)
+	int	value;
+
+	if (!valid_arg(s))
 	{
-		ft_putstr_fd("Error: Invalid Input\n", 2);
+		ft_putstr_fd("Error: Invalid input\n", 2);
+		return (0);
+	}
+	value = ft_atoi(s);
+	if (value <= 0)
+	{
+		ft_putstr_fd("Error: Invalid input\n", 2);
 		return (0);
 	}
 	return (1);

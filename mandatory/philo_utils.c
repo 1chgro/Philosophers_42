@@ -25,7 +25,6 @@ void	ft_putstr_fd(char *s, int fd)
 
 }
 
-
 int	ft_atoi(const char *str)
 {
 	int		sign;
@@ -49,4 +48,36 @@ int	ft_atoi(const char *str)
 		str++;
 	}
 	return (total * sign);
+}
+
+size_t	time_get(void)
+{
+	struct timeval	time;
+	size_t			time_ms;
+
+	if (gettimeofday(&time, NULL) == -1)
+		return (0);
+	time_ms = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+	return (time_ms);
+}
+
+void destroy_mutexes(t_table *table)
+{
+    int i;
+
+    pthread_mutex_destroy(&table->meal_lock);
+    i = 0;
+    if (table->forks)
+    {
+        i = 0;
+        while (i < table->num_of_philos)
+        {
+            pthread_mutex_destroy(&table->forks[i]);
+            i++;
+        }
+    }
+    if (table->forks)
+		free(table->forks);
+    if (table->philos)
+		free(table->philos);
 }

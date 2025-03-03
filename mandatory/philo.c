@@ -1,71 +1,90 @@
 #include "philo.h"
 
-void init_args(char **av, t_table *table)
+void	print_status(t_philo *philo, char *status)
 {
-	table->num_of_philos = ft_atoi(av[1]);
-	table->time_to_die = ft_atoi(av[2]);
-	table->time_to_eat = ft_atoi(av[3]);
-	table->time_to_sleep = ft_atoi(av[4]);
-	table->must_eat_count = -1;
-	if (av[5])
-		table->must_eat_count = ft_atoi(av[5]);
-}
-
-int init_forks(t_table *table)
-{
-	int i;
-	if (pthread_mutex_init(&table->meal_lock, NULL) != 0)
-		return (0);
-	table->forks = malloc(sizeof(pthread_mutex_t) *(table->num_of_philos));
-	if (!table->forks)
-		return (0);
-	i = 0;
-	while(i < table->num_of_philos)
+	size_t	current_time;
+	
+	pthread_mutex_lock(&philo->table->meal_lock);
+	if (philo->table->death_flag)
 	{
-		if (pthread_mutex_init(&table->forks[i], NULL) != 0)
-			return (free(table->forks), 0);
-		i++;
+		pthread_mutex_unlock(&philo->table->meal_lock);
+		return ;
 	}
-	return (1);
+	current_time = time_get() - philo->table->start_time;
+	printf("%zu %d %s\n", current_time, philo->id, status);
+	pthread_mutex_unlock(&philo->table->meal_lock);
 }
 
-int init_philos(t_table *table)
+int should_stop(t_philo *philo)
 {
-	int	i;
-
-	table->philos = malloc(sizeof(t_philo) * table->num_of_philos);
-	if (!table->philos)
-		return (free(table->forks), 0);
-	i = 0;
-	while (i < table->num_of_philos)
+	pthread_mutex_lock(&philo->table->meal_lock);
+	if (philo->table->death_flag)
 	{
-		table->philos[i].id = i;
-		table->philos[i].num_of_meals = 0;
-		table->philos[i].last_meal = 0;
-		table->philos[i].is_dead = 0;
-		table->philos[i].is_eating = 0;
-		table->philos[i].is_sleeping = 0;
-		table->philos[i].left_fork = &table->forks[i];
-		table->philos[i].right_fork = &table->forks[(i + 1) % table->num_of_philos];
-		i++;
+		pthread_mutex_unlock(&philo->table->meal_lock);
+		return (1);
 	}
-	return (1);
+	if (philo->table->must_eat_count != -1 && \
+		philo->num_of_meals >= philo->table->must_eat_count)
+	{
+		pthread_mutex_unlock(&philo->table->meal_lock);
+		return (1);
+	}
+	pthread_mutex_unlock(&philo->table->meal_lock);
+	return (0);
 }
 
-
-int init(char **av, t_table *table)
+void	*philo_routine(void *arg)
 {
-	init_args(av, table);
-	if (!init_forks(table))
-		return (0);
-	if (!init_philos(table))
-		return (0);
-	return (1);
+	t_philo	*philo;
+	
+	philo = (t_philo *)arg;
+	if (philo->id % 2 == 0)
+		usleep(1000);
+	while (1)
+	{
+		if (should_stop(philo))
+			break ;
+		philo_eat(philo);
+		if (should_stop(philo))
+			break ;
+		philo_sleep(philo);
+		if (should_stop(philo))
+			break ;
+		philo_think(philo);
+	}
+	return (NULL);
 }
-void *fun(void *arg)
+
+void *monitor(void *arg)
 {
 	printf("hello\n");
 	return (void *)0;
+}
+int start_dinning(t_table *table)
+{
+	int i;
+	pthread_t monitor_thread;
+	
+	i = 0;
+	while(i < table->num_of_philos)
+	{
+		if (pthread_create(&table->philos[i].thread, NULL, philo_routine, &table->philos[i]) != 0)
+			return (ft_putstr_fd("Error: creating threads\n", 2), 0);
+		i++;
+	}
+	if (pthread_create(&monitor_thread, NULL, monitor, table) != 0)
+	{
+		ft_putstr_fd(ERR_THREAD, 2);
+		return (0);
+	}
+	i = 0;
+	while (i < table->num_of_philos)
+	{
+		pthread_join(table->philos[i].thread, NULL);
+		i++;
+	}
+	pthread_join(monitor_thread, NULL);
+	return (1);
 }
 
 int main(int ac, char **av)
@@ -76,9 +95,17 @@ int main(int ac, char **av)
 		return (ft_putstr_fd("Error: Wrong num of args\n", 2), 1);
 	if (!check_input(av))
 		return (1);
-	if (!init(av, &table))
+	if (!initialize_all(av, &table))
 		return (printf("init Error\n"), 1);
-	
+	if (table.num_of_philos == 1)
+	{
+		handle_one_philo(&table);
+		destroy_mutexes(&table);
+		return (0);
+	}
+	start_dinning(&table);
+	printf("hello\n");
 
+	destroy_mutexes(&table);
 	return (0);
 }
