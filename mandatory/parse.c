@@ -19,13 +19,13 @@ int	parse_arg(char *s)
 
 	if (!valid_arg(s))
 	{
-		ft_putstr_fd("Error: Invalid input\n", 2);
+		ft_putstr_fd(ERR_INPUT, 2);
 		return (0);
 	}
 	value = ft_atoi(s);
 	if (value <= 0)
 	{
-		ft_putstr_fd("Error: Invalid input\n", 2);
+		ft_putstr_fd(ERR_INPUT, 2);
 		return (0);
 	}
 	return (1);

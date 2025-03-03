@@ -64,6 +64,9 @@ void    philo_eat(t_philo *philo);
 void	philo_sleep(t_philo *philo);
 void	philo_think(t_philo *philo);
 void	print_status(t_philo *philo, char *status);
+// void	*monitor(void *arg);
+int		should_stop(t_philo *philo);
+int		start_dinning(t_table *table);
 
 
 #endif
