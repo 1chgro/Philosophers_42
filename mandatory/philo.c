@@ -104,8 +104,6 @@ int main(int ac, char **av)
 		return (0);
 	}
 	start_dinning(&table);
-	printf("hello\n");
-
 	destroy_mutexes(&table);
 	return (0);
 }
