@@ -25,13 +25,13 @@ typedef struct s_philo
 {
 	int				id;
 	pthread_t		thread;
-	pthread_mutex_t	*right_fork;
-	pthread_mutex_t	*left_fork;
 	int				is_dead;
 	int				is_eating;
 	int				is_sleeping;
 	size_t			last_meal;
 	int				num_of_meals;
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*right_fork;
 	t_table			*table;
 }	t_philo;
 
@@ -60,13 +60,6 @@ void	destroy_mutexes(t_table *table);
 int		initialize_all(char **av, t_table *table);
 void	handle_one_philo(t_table *table);
 
-void    philo_eat(t_philo *philo);
-void	philo_sleep(t_philo *philo);
-void	philo_think(t_philo *philo);
-void	print_status(t_philo *philo, char *status);
-// void	*monitor(void *arg);
-int		should_stop(t_philo *philo);
-int		start_dinning(t_table *table);
 
 
 #endif

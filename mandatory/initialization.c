@@ -6,6 +6,7 @@ void initialize_args(char **av, t_table *table)
 	table->time_to_die = ft_atoi(av[2]);
 	table->time_to_eat = ft_atoi(av[3]);
 	table->time_to_sleep = ft_atoi(av[4]);
+	table->death_flag = 0;
 	table->must_eat_count = -1;
 	if (av[5])
 		table->must_eat_count = ft_atoi(av[5]);
@@ -40,23 +41,21 @@ int initialize_philos(t_table *table)
 
 	table->philos = malloc(sizeof(t_philo) * table->num_of_philos);
 	if (!table->philos)
-	{
-		destroy_mutexes(table);
-		return (0);
-	}
+		return (destroy_mutexes(table), 0);
 	i = 0;
 	table->start_time = time_get();
 	while (i < table->num_of_philos)
 	{
 		table->philos[i].id = i + 1;
-		table->philos[i].num_of_meals = 0;
-		table->philos[i].last_meal = table->start_time;
 		table->philos[i].is_dead = 0;
 		table->philos[i].is_eating = 0;
 		table->philos[i].is_sleeping = 0;
+		table->philos[i].last_meal = table->start_time;
+		table->philos[i].num_of_meals = 0;
 		table->philos[i].left_fork = &table->forks[i];
 		table->philos[i].right_fork = &table->forks[(i + 1) % table->num_of_philos];
 		table->philos[i].table = table;
+
 		i++;
 	}
 	return (1);

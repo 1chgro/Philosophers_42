@@ -4,7 +4,7 @@ FLAGS = -pthread
 
 SRCS= mandatory/philo.c mandatory/philo_utils.c\
 		mandatory/parse.c mandatory/initialization.c\
-			mandatory/start_dinning.c mandatory/dinning_utils.c
+			mandatory/start_dining.c mandatory/dining_utils.c
 		
 OBJS= $(SRCS:.c=.o)
 
