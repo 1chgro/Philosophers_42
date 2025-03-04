@@ -1,14 +1,6 @@
 #include "philo.h"
 
-size_t	ft_strlen(const char *s)
-{
-	int	i;
 
-	i = 0;
-	while (s[i])
-		i++;
-	return (i);
-}
 
 void	ft_putstr_fd(char *s, int fd)
 {
@@ -65,7 +57,7 @@ void destroy_mutexes(t_table *table)
 {
     int i;
 
-    pthread_mutex_destroy(&table->meal_lock);
+    pthread_mutex_destroy(&table->eat_lock);
     i = 0;
     if (table->forks)
     {
@@ -80,4 +72,20 @@ void destroy_mutexes(t_table *table)
 		free(table->forks);
     if (table->philos)
 		free(table->philos);
+}
+
+
+void print_status(t_philo *philo, char *status)
+{
+	size_t current_time;
+
+	pthread_mutex_lock(&philo->table->eat_lock);
+	if (philo->table->death_flag == 1)
+	{
+		pthread_mutex_unlock(&philo->table->eat_lock);
+		return ;
+	}
+	current_time = time_get() - philo->table->start_time;
+	printf("%zu %d %s\n", current_time, philo->id, status);
+	pthread_mutex_unlock(&philo->table->eat_lock);
 }

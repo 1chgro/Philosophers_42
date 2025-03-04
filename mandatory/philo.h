@@ -25,9 +25,6 @@ typedef struct s_philo
 {
 	int				id;
 	pthread_t		thread;
-	int				is_dead;
-	int				is_eating;
-	int				is_sleeping;
 	size_t			last_meal;
 	int				num_of_meals;
 	pthread_mutex_t	*left_fork;
@@ -44,7 +41,9 @@ typedef struct s_table
 	int				must_eat_count;
 	int				death_flag;
 	size_t			start_time;
-	pthread_mutex_t	meal_lock;
+	pthread_mutex_t	eat_lock;
+	pthread_mutex_t	time_lock;
+	pthread_mutex_t	print_lock;
 	pthread_mutex_t	*forks;
 	t_philo			*philos;
 }	t_table;
@@ -59,7 +58,8 @@ size_t	time_get(void);
 void	destroy_mutexes(t_table *table);
 int		initialize_all(char **av, t_table *table);
 void	handle_one_philo(t_table *table);
-
-
+void	*routine(void *arg);
+void	*monitoring(void *arg);
+void print_status(t_philo *philo, char *status);
 
 #endif

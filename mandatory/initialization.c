@@ -1,6 +1,6 @@
 #include "philo.h"
 
-void initialize_args(char **av, t_table *table)
+void	initialize_args(char **av, t_table *table)
 {
 	table->num_of_philos = ft_atoi(av[1]);
 	table->time_to_die = ft_atoi(av[2]);
@@ -12,10 +12,23 @@ void initialize_args(char **av, t_table *table)
 		table->must_eat_count = ft_atoi(av[5]);
 }
 
-int initialize_forks(t_table *table)
+int	initialize_mutexes(t_table *table)
 {
-	int i;
-	if (pthread_mutex_init(&table->meal_lock, NULL) != 0)
+	if (pthread_mutex_init(&table->eat_lock, NULL) != 0)
+		return (0);
+	if (pthread_mutex_init(&table->time_lock, NULL) != 0)
+		return (0);
+	if (pthread_mutex_init(&table->print_lock, NULL) != 0)
+		return (0);
+		
+	return (1);
+}
+
+int	initialize_forks(t_table *table)
+{
+	int	i;
+	
+	if (!initialize_mutexes(table))
 		return (0);
 	table->forks = malloc(sizeof(pthread_mutex_t) *(table->num_of_philos));
 	if (!table->forks)
@@ -27,7 +40,9 @@ int initialize_forks(t_table *table)
 		{
 			while (--i >= 0)
 				pthread_mutex_destroy(&table->forks[i]);
-			pthread_mutex_destroy(&table->meal_lock);
+			pthread_mutex_destroy(&table->eat_lock);
+			pthread_mutex_destroy(&table->time_lock);
+			pthread_mutex_destroy(&table->print_lock);
 			return (free(table->forks), 0);
 		}
 		i++;
@@ -35,7 +50,7 @@ int initialize_forks(t_table *table)
 	return (1);
 }
 
-int initialize_philos(t_table *table)
+int	initialize_philos(t_table *table)
 {
 	int	i;
 
@@ -47,21 +62,17 @@ int initialize_philos(t_table *table)
 	while (i < table->num_of_philos)
 	{
 		table->philos[i].id = i + 1;
-		table->philos[i].is_dead = 0;
-		table->philos[i].is_eating = 0;
-		table->philos[i].is_sleeping = 0;
-		table->philos[i].last_meal = table->start_time;
+		table->philos[i].last_meal = time_get();
 		table->philos[i].num_of_meals = 0;
 		table->philos[i].left_fork = &table->forks[i];
 		table->philos[i].right_fork = &table->forks[(i + 1) % table->num_of_philos];
 		table->philos[i].table = table;
-
 		i++;
 	}
 	return (1);
 }
 
-int initialize_all(char **av, t_table *table)
+int	initialize_all(char **av, t_table *table)
 {
 	initialize_args(av, table);
 	if (!initialize_forks(table))

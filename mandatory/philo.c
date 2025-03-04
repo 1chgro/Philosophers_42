@@ -7,69 +7,26 @@ void	handle_one_philo(t_table *table)
 	printf("%d 1 %s\n", table->time_to_die, DEAD_MSG);
 }
 
-void print_status(t_philo *philo, char *status)
+int	start_dining(t_table *table)
 {
-	size_t current_time;
+	pthread_t	monitor_thread;
+	int			i;
 
-	pthread_mutex_lock(&philo->table->meal_lock);
-	if (philo->table->death_flag == 1)
+	table->start_time = time_get();
+	i = 0;
+	while (i < table->num_of_philos)
 	{
-		pthread_mutex_unlock(&philo->table->meal_lock);
-		return ;
-	}
-	current_time = time_get() - philo->table->start_time;
-	printf("%zu %d %s\n", current_time, philo->id, status);
-	pthread_mutex_unlock(&philo->table->meal_lock);
-}
-
-void philo_think(t_philo *philo)
-{
-	print_status(philo, THINK_MSG);
-}
-void philo_sleep(t_philo *philo)
-{
-	print_status(philo, SLEEP_MSG);
-	usleep(philo->table->time_to_sleep * 1000);
-}
-
-void philo_eat(t_philo *philo)
-{
-	if (philo->id % 2 == 0)
-		usleep(100);
-	pthread_mutex_lock(philo->left_fork);
-	print_status(philo, FORK_MSG);
-	pthread_mutex_lock(philo->right_fork);
-	print_status(philo, FORK_MSG);
-	pthread_mutex_unlock(philo->right_fork);
-	pthread_mutex_unlock(philo->left_fork);
-}
-
-void *routine(void *arg)
-{
-	t_philo *philo = (t_philo *)arg;
-	philo_eat(philo);
-	philo_sleep(philo);
-	philo_think(philo);
-	return ((void *)(long)philo->id);
-}
-
-void *monitoring(void *arg)
-{
-	// printf("monitoring...\n");
-	return ((void *)(long)0);
-}
-int start_dining(t_table *table)
-{
-	pthread_t monitor_thread;
-	int i = 0;
-	while(i < table->num_of_philos)
-	{
-		pthread_create(&table->philos[i].thread, NULL, routine, &table->philos[i]);
+		table->philos[i].last_meal = table->start_time;
+		if (pthread_create(&table->philos[i].thread, NULL, routine, &table->philos[i]) != 0)
+			return (ft_putstr_fd(ERR_THREAD, 2), 0);
 		i++;
 	}
+	
+	if (pthread_create(&monitor_thread, NULL, monitoring, table) != 0)
+		return (ft_putstr_fd(ERR_THREAD, 2), 0);
+		
 	i = 0;
-	pthread_create(&monitor_thread, NULL, monitoring, NULL);
-	while(i < table->num_of_philos)
+	while (i < table->num_of_philos)
 	{
 		pthread_join(table->philos[i].thread, NULL);
 		i++;
