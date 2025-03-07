@@ -3,7 +3,7 @@ NAME=philo
 FLAGS = -Wall -Werror -Wextra -pthread
 
 SRCS= mandatory/philo.c mandatory/philo_utils.c\
-		mandatory/parse.c
+		mandatory/parse.c mandatory/init_dining_table.c
 		
 OBJS= $(SRCS:.c=.o)
 
@@ -23,6 +23,5 @@ clean:
 fclean: clean
 	@rm -rf $(NAME)
 	@echo "Done:removing excutable"
-
 
 re: fclean all

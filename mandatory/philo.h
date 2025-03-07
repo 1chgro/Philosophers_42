@@ -55,6 +55,8 @@ int		valid_arg(char *s);
 int		parse_arg(char *s);
 int		check_input(char **s);
 void	destroy_mutexes(t_table *table);
+int		init_table(t_table *table, char **av);
+size_t get_time(void);
 
 
 #endif
