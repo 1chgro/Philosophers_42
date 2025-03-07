@@ -1,10 +1,9 @@
 NAME=philo
 
-FLAGS = -pthread 
+FLAGS = -Wall -Werror -Wextra -pthread
 
 SRCS= mandatory/philo.c mandatory/philo_utils.c\
-		mandatory/parse.c mandatory/initialization.c\
-			mandatory/monitoring.c mandatory/simulate.c
+		mandatory/parse.c
 		
 OBJS= $(SRCS:.c=.o)
 

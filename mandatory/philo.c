@@ -1,57 +1,93 @@
 #include "philo.h"
 
-void	handle_one_philo(t_table *table)
+size_t get_time(void)
 {
-	printf("0 1 %s\n", FORK_MSG);
-	usleep(table->time_to_die * 1000);
-	printf("%d 1 %s\n", table->time_to_die, DEAD_MSG);
+	return (32);
 }
 
-int	start_dining(t_table *table)
+void init_philo(t_table *table)
 {
-	pthread_t	monitor_thread;
-	int			i;
+	int i;
 
-	table->start_time = time_get();
 	i = 0;
-	while (i < table->num_of_philos)
+	while(i < table->num_of_philos)
 	{
+		table->philos[i].id = i + 1;
 		table->philos[i].last_meal = table->start_time;
-		if (pthread_create(&table->philos[i].thread, NULL, routine, &table->philos[i]) != 0)
-			return (ft_putstr_fd(ERR_THREAD, 2), 0);
+		table->philos[i].num_of_meals = 0;
+		table->philos[i].left_fork = &table->forks[i];
+		table->philos[i].right_fork = &table->forks[(i + 1) % table->num_of_philos];
+		table->philos[i].table = table;
 		i++;
 	}
-	
-	if (pthread_create(&monitor_thread, NULL, monitoring, table) != 0)
-		return (ft_putstr_fd(ERR_THREAD, 2), 0);
-		
-	i = 0;
-	while (i < table->num_of_philos)
+}
+
+int init_philo_forks(t_table *table)
+{
+	int i = 0;
+	table->forks = malloc(sizeof(pthread_mutex_t) * table->num_of_philos);
+	if (!table->forks)
+		return 0;
+	while(i < table->num_of_philos)
 	{
-		pthread_join(table->philos[i].thread, NULL);
+		if (pthread_mutex_init(&table->forks[i], NULL) != 0)
+		{
+			while(--i)
+				pthread_mutex_destroy(&table->forks[i]);
+			return (free(table->forks), 0);
+		}
 		i++;
 	}
-	pthread_join(monitor_thread, NULL);
+	table->philos = malloc(sizeof(t_philo) * table->num_of_philos);
+	if (!table->philos)
+		return (destroy_mutexes(table), 0);
+	init_philo(table);
 	return (1);
 }
 
+int init_table(t_table *table, char **av)
+{
+	table->num_of_philos = ft_atoi(av[1]);
+	table->time_to_die = ft_atoi(av[2]);
+	table->time_to_eat = ft_atoi(av[3]);
+	table->time_to_sleep = ft_atoi(av[4]);
+	if (av[5])
+		table->must_eat_count = ft_atoi(av[5]);
+	table->death_flag = 0;
+	table->start_time = get_time();
+	if (pthread_mutex_init(&table->eat_lock, NULL) != 0)
+		return (0);
+	if (pthread_mutex_init(&table->time_lock, NULL) != 0)
+		return (0);
+	if (pthread_mutex_init(&table->print_lock, NULL) != 0)
+		return (0);
+	if (!init_philo_forks(table))
+		return (0);
+	return (1);
+}
+
+void f()
+{
+		system("leaks -q philo");
+}
 int main(int ac, char **av)
 {
+	atexit(f);
 	t_table table;
 
 	if (ac != 5 && ac != 6)
 		return (ft_putstr_fd(ERR_ARGS, 2), 1);
 	if (!check_input(av))
 		return (1);
-	if (!initialize_all(av, &table))
+	if (!init_table(&table, av))
 		return (ft_putstr_fd(ERR_INIT, 2), 1);
-	if (table.num_of_philos == 1)
+	int i = 0;
+	while(i < table.num_of_philos)
 	{
-		handle_one_philo(&table);
-		destroy_mutexes(&table);
-		return (0);
+		printf("philo num %d\t| %d\n", table.philos[i].id, table.philos[i].num_of_meals);
+		i++;
 	}
-	start_dining(&table);
 	destroy_mutexes(&table);
+
 	return (0);
 }

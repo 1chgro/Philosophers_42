@@ -54,12 +54,7 @@ int		ft_atoi(const char *str);
 int		valid_arg(char *s);
 int		parse_arg(char *s);
 int		check_input(char **s);
-size_t	time_get(void);
 void	destroy_mutexes(t_table *table);
-int		initialize_all(char **av, t_table *table);
-void	handle_one_philo(t_table *table);
-void	*routine(void *arg);
-void	*monitoring(void *arg);
-void print_status(t_philo *philo, char *status);
+
 
 #endif

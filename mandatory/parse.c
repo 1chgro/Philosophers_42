@@ -4,6 +4,8 @@ int	valid_arg(char *s)
 {
 	int i;
 	i = 0;
+	if (s[0] == '+')
+		i++;
 	while(s[i])
 	{
 		if (!(s[i] >= '0' && s[i] <= '9'))
