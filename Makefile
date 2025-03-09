@@ -1,6 +1,6 @@
 NAME=philo
 
-FLAGS = -Wall -Werror -Wextra -pthread
+FLAGS = -Wall -Werror -Wextra -pthread -fsanitize=address -g
 
 SRCS= mandatory/philo.c mandatory/philo_utils.c\
 		mandatory/parse.c mandatory/init_dining_table.c

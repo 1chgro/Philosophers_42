@@ -58,9 +58,19 @@ void *printhell(void *v)
 int main()
 {
     void *res = NULL;
-    pthread_t id;
+    // pthread_t id;
+    struct timeval time;
 
-    pthread_create(&id, NULL, printhell, NULL);
+    size_t time_sec;
+    gettimeofday(&time, NULL);
+    time_sec = time.tv_sec / 1000;
+    printf("%ld\n", time_sec);
+    for (int i = 0; i < 10; i++);
+    size_t temp = time_sec;
+    time_sec = time.tv_sec / 1000 - temp;
+    printf("%ld\n", time_sec);
+
+    // pthread_create(&id, NULL, printhell, NULL);
     // pthread_detach(id);
     return (0);
 }
