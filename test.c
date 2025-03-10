@@ -46,31 +46,32 @@ typedef struct mutxx
 }t_mutx;
 
 
-void *printhell(void *v)
+void printhell(void *v)
 {
     pthread_mutex_t *mutx = (pthread_mutex_t *)v;
-    printf("hello\n");
-    printf("hello\n");
-    return (void *)10;
+    long  i = 0;
+    long k =0;
+    while (i < 1000000000)
+    {
+        k++;
+        // printf("hello: %d\n", k);
+        i++;
+    }
+    // printf("hello: %ld\n", k);
+    return (void)k;
 }
 
 
 int main()
 {
     void *res = NULL;
-    // pthread_t id;
-    struct timeval time;
-
-    size_t time_sec;
-    gettimeofday(&time, NULL);
-    time_sec = time.tv_sec / 1000;
-    printf("%ld\n", time_sec);
-    for (int i = 0; i < 10; i++);
-    size_t temp = time_sec;
-    time_sec = time.tv_sec / 1000 - temp;
-    printf("%ld\n", time_sec);
-
-    // pthread_create(&id, NULL, printhell, NULL);
+    pthread_t id;
+    pthread_t id2;
+    pthread_create(&id, NULL, (void *)printhell, NULL);
+    pthread_create(&id2, NULL, (void *)printhell, NULL);
+    pthread_join(id, &res);
+    pthread_join(id2, &res);
+    printf("res: %ld\n", (long)res);
     // pthread_detach(id);
     return (0);
 }

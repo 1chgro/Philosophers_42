@@ -1,5 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: olachgue <olachgue@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/09 02:11:58 by olachgue          #+#    #+#             */
+/*   Updated: 2025/03/09 02:32:52 by olachgue         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PHILO_H
-#define PHILO_H
+# define PHILO_H
 
 # include <stdio.h>
 # include <unistd.h>
@@ -19,7 +31,7 @@
 # define THINK_MSG "is thinking"
 # define DEAD_MSG "died"
 
-typedef struct s_table t_table;
+typedef struct s_table	t_table;
 
 typedef struct s_philo
 {
@@ -48,7 +60,6 @@ typedef struct s_table
 	t_philo			*philos;
 }	t_table;
 
-
 void	ft_putstr_fd(char *s, int fd);
 int		ft_atoi(const char *str);
 int		valid_arg(char *s);
@@ -56,7 +67,11 @@ int		parse_arg(char *s);
 int		check_input(char **s);
 void	destroy_mutexes(t_table *table);
 int		init_table(t_table *table, char **av);
-size_t get_time(void);
-
+size_t	get_time(void);
+void	monitor(void *arg);
+int		start_dining(t_table *table);
+int		ft_usleep(size_t time, t_table *table);
+void	philo_print(t_philo *philo, char *message);
+void	handle_one_philo(t_table *table);
 
 #endif

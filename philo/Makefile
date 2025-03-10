@@ -1,15 +1,20 @@
 NAME=philo
 
-FLAGS = -Wall -Werror -Wextra -pthread -fsanitize=address -g
+FLAGS = -Wall -Werror -Wextra -pthread
 
-SRCS= mandatory/philo.c mandatory/philo_utils.c\
-		mandatory/parse.c mandatory/init_dining_table.c
+SRCS= \
+		philo.c\
+		parse.c\
+		routine.c\
+		monitor.c\
+		philo_utils.c\
+		init_dining_table.c
 		
 OBJS= $(SRCS:.c=.o)
 
 all: $(NAME)
 
-$(NAME): $(OBJS) mandatory/philo.h
+$(NAME): $(OBJS) philo.h
 	@cc $(FLAGS) $(OBJS) -o $(NAME)
 	@echo "Done: excutable is ready"
 
