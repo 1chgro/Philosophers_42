@@ -6,7 +6,7 @@
 /*   By: olachgue <olachgue@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 02:11:58 by olachgue          #+#    #+#             */
-/*   Updated: 2025/03/11 22:39:05 by olachgue         ###   ########.fr       */
+/*   Updated: 2025/03/12 03:15:23 by olachgue         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 # include <pthread.h>
 # include <stdlib.h>
 # include <sys/time.h>
-# include <stdbool.h>
 
 # define ERR_ARGS "Error: Wrong number of arguments\n"
 # define ERR_INPUT "Error: Invalid input\n"
@@ -69,7 +68,8 @@ int		check_input(char **s);
 void	destroy_mutexes(t_table *table);
 int		init_table(t_table *table, char **av);
 size_t	get_time(void);
-void 	monitor(t_table *table);
+void	monitor(t_table *table);
+int		should_stop(t_philo *philo);
 int		start_dining(t_table *table);
 int		ft_usleep(size_t time, t_table *table);
 void	philo_print(t_philo *philo, char *message);

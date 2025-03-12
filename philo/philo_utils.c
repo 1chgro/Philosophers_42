@@ -6,7 +6,7 @@
 /*   By: olachgue <olachgue@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 02:15:06 by olachgue          #+#    #+#             */
-/*   Updated: 2025/03/12 02:10:40 by olachgue         ###   ########.fr       */
+/*   Updated: 2025/03/12 02:53:20 by olachgue         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,6 @@ int	ft_usleep(size_t time, t_table *table)
 		pthread_mutex_unlock(&table->death_lock);
 		usleep(100);
 	}
-
 	return (0);
 }
 

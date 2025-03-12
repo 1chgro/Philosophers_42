@@ -1,4 +1,4 @@
-#include "mandatory/philo.h"
+#include "philo_bonus/philo_bonus.h"
 
 // int k = 0;
 // void *printhello(void *m1)
@@ -39,39 +39,68 @@
 //     return 0;
 // }
 
-typedef struct mutxx
-{
-    pthread_mutex_t lock;
-    pthread_mutex_t lock2;
-}t_mutx;
+// typedef struct mutxx
+// {
+//     pthread_mutex_t lock;
+//     pthread_mutex_t lock2;
+// }t_mutx;
 
 
-void printhell(void *v)
-{
-    pthread_mutex_t *mutx = (pthread_mutex_t *)v;
-    long  i = 0;
-    long k =0;
-    while (i < 1000000000)
-    {
-        k++;
-        // printf("hello: %d\n", k);
-        i++;
-    }
-    // printf("hello: %ld\n", k);
-    return (void)k;
-}
+// void printhell(void *v)
+// {
+//     pthread_mutex_t *mutx = (pthread_mutex_t *)v;
+//     long  i = 0;
+//     long k =0;
+//     while (i < 1000000000)
+//     {
+//         k++;
+//         // printf("hello: %d\n", k);
+//         i++;
+//     }
+//     // printf("hello: %ld\n", k);
+//     return (void)k;
+// }
+
+
+// int main()
+// {
+//     void *res = NULL;
+//     pthread_t id;
+//     pthread_t id2;
+//     pthread_create(&id, NULL, (void *)printhell, NULL);
+//     pthread_create(&id2, NULL, (void *)printhell, NULL);
+//     pthread_join(id, &res);
+//     pthread_join(id2, &res);
+//     printf("res: %ld\n", (long)res);
+//     // pthread_detach(id);
+//     return (0);
+// }
 
 
 int main()
 {
-    void *res = NULL;
-    pthread_t id;
-    pthread_t id2;
-    pthread_create(&id, NULL, (void *)printhell, NULL);
-    pthread_create(&id2, NULL, (void *)printhell, NULL);
-    pthread_join(id, &res);
-    pthread_join(id2, &res);
-    printf("res: %ld\n", (long)res);
-    // pthread_detach(id);
-    return (0);
+    sem_t *sem1 = sem_open("mysem", O_CREAT, 0644, 1);
+    if (sem1 == SEM_FAILED)
+    {
+        perror("sem_open: ");
+        exit(1);
+    }
+
+    pid_t pid = fork();
+    if (pid == -1)
+    {
+        perror("fork");
+        exit(1);
+    }
+    // if (pid == 0)
+    // {
+    //     printf("num: %d\n", (int)sem1);
+    //     exit(0);
+    // }
+    // int status;
+    // wait(&status);
+    printf("prent num: %d\n", (int)sem1);
+
+
+    return 0;
 }
