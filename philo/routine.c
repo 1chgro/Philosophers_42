@@ -6,7 +6,7 @@
 /*   By: olachgue <olachgue@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 02:53:42 by olachgue          #+#    #+#             */
-/*   Updated: 2025/03/12 02:54:57 by olachgue         ###   ########.fr       */
+/*   Updated: 2025/03/12 22:46:18 by olachgue         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,17 @@ void	philo_eat(t_philo *philo)
 	pthread_mutex_lock(philo->right_fork);
 	pthread_mutex_lock(&philo->table->print_lock);
 	philo_print(philo, FORK_MSG);
+	pthread_mutex_unlock(&philo->table->print_lock);
+	pthread_mutex_lock(&philo->table->print_lock);
 	philo_print(philo, EAT_MSG);
 	pthread_mutex_unlock(&philo->table->print_lock);
-	pthread_mutex_lock(&philo->table->eat_lock);
-	philo->num_of_meals++;
-	pthread_mutex_unlock(&philo->table->eat_lock);
 	pthread_mutex_lock(&philo->table->time_lock);
 	philo->last_meal = get_time();
 	pthread_mutex_unlock(&philo->table->time_lock);
 	ft_usleep(philo->table->time_to_eat, philo->table);
+	pthread_mutex_lock(&philo->table->eat_lock);
+	philo->num_of_meals++;
+	pthread_mutex_unlock(&philo->table->eat_lock);
 	pthread_mutex_unlock(philo->right_fork);
 	pthread_mutex_unlock(philo->left_fork);
 }

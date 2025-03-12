@@ -6,7 +6,7 @@
 /*   By: olachgue <olachgue@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 02:20:15 by olachgue          #+#    #+#             */
-/*   Updated: 2025/03/12 02:52:57 by olachgue         ###   ########.fr       */
+/*   Updated: 2025/03/12 22:39:50 by olachgue         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,10 @@
 void	philo_print(t_philo *philo, char *message)
 {
 	pthread_mutex_lock(&philo->table->death_lock);
-	if (philo->table->death_flag)
-	{
-		pthread_mutex_unlock(&philo->table->death_lock);
-		return ;
-	}
+	if (!philo->table->death_flag)
+		printf("%zu %d %s\n", get_time() - philo->table->start_time, \
+		philo->id, message);
 	pthread_mutex_unlock(&philo->table->death_lock);
-	printf("%zu %d %s\n", get_time() - \
-	philo->table->start_time, philo->id, message);
 }
 
 int	should_stop(t_philo *philo)
@@ -91,13 +87,6 @@ void	monitor(t_table *table)
 
 	while (1)
 	{
-		pthread_mutex_lock(&table->death_lock);
-		if (table->death_flag)
-		{
-			pthread_mutex_unlock(&table->death_lock);
-			break ;
-		}
-		pthread_mutex_unlock(&table->death_lock);
 		i = 0;
 		while (i < table->num_of_philos)
 		{
