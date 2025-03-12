@@ -22,10 +22,8 @@ int check_death(t_table *table, int i)
 	pthread_mutex_lock(&table->death_lock);
 	if ( (current_time - table->philos[i].last_meal) > ((size_t)(table->time_to_die)) && !table->death_flag)
 	{
-		pthread_mutex_lock(&table->print_lock);
 		printf("%zu %d %s\n", current_time - table->start_time, \
 		table->philos[i].id, DEAD_MSG);
-		pthread_mutex_unlock(&table->print_lock);
 		table->death_flag = 1;
 		pthread_mutex_unlock(&table->death_lock);
 		pthread_mutex_unlock(&table->time_lock);
@@ -81,7 +79,7 @@ void monitor(t_table *table)
 				return ;
 			i++;
 		}
-		usleep(500);
+		usleep(2000);
 	}
 	return ;
 }
@@ -97,16 +95,17 @@ void philo_eat(t_philo *philo)
 	philo_print(philo, FORK_MSG);
 	philo_print(philo, EAT_MSG);
 	pthread_mutex_unlock(&philo->table->print_lock);
-	pthread_mutex_lock(&philo->table->time_lock);
-	philo->last_meal = get_time();
-	pthread_mutex_unlock(&philo->table->time_lock);
 	pthread_mutex_lock(&philo->table->eat_lock);
 	philo->num_of_meals++;
 	pthread_mutex_unlock(&philo->table->eat_lock);
+	pthread_mutex_lock(&philo->table->time_lock);
+	philo->last_meal = get_time();
+	pthread_mutex_unlock(&philo->table->time_lock);
 	ft_usleep(philo->table->time_to_eat, philo->table);
 	pthread_mutex_unlock(philo->right_fork);
 	pthread_mutex_unlock(philo->left_fork);
 }
+
 
 void philo_sleep(t_philo *philo)
 {
