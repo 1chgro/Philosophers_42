@@ -1,6 +1,6 @@
 NAME=philo
 
-FLAGS = -Wall -Werror -Wextra -pthread
+FLAGS = -Wall -Werror -Wextra -pthread -fsanitize=thread -g
 
 SRCS= \
 		philo.c\

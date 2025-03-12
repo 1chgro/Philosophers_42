@@ -1,18 +1,92 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   routine.c                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: olachgue <olachgue@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/09 02:27:17 by olachgue          #+#    #+#             */
-/*   Updated: 2025/03/09 02:31:01 by olachgue         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "philo.h"
 
-void	philo_eat(t_philo *philo)
+int should_stop(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->table->death_lock);
+	if (philo->table->death_flag)
+	{
+		pthread_mutex_unlock(&philo->table->death_lock);
+		return (1);
+	}
+	pthread_mutex_unlock(&philo->table->death_lock);
+	return (0);
+}
+
+int check_death(t_table *table, int i)
+{
+	size_t current_time;
+
+	pthread_mutex_lock(&table->time_lock);
+	current_time = get_time();
+	pthread_mutex_lock(&table->death_lock);
+	if ( (current_time - table->philos[i].last_meal) > ((size_t)(table->time_to_die)) && !table->death_flag)
+	{
+		pthread_mutex_lock(&table->print_lock);
+		printf("%zu %d %s\n", current_time - table->start_time, \
+		table->philos[i].id, DEAD_MSG);
+		pthread_mutex_unlock(&table->print_lock);
+		table->death_flag = 1;
+		pthread_mutex_unlock(&table->death_lock);
+		pthread_mutex_unlock(&table->time_lock);
+		return (1);
+	}
+	pthread_mutex_unlock(&table->death_lock);
+	pthread_mutex_unlock(&table->time_lock);
+	return (0);
+}
+
+int check_all_ate(t_table *table, int i)
+{
+	int all_ate;
+	int j;
+
+	all_ate = 0;
+	pthread_mutex_lock(&table->eat_lock);
+	if (table->must_eat_count > 0 && table->philos[i].num_of_meals >= table->must_eat_count)
+	{
+		all_ate = 1;
+		j = -1;
+		while (++j < table->num_of_philos && all_ate)
+			if (table->philos[j].num_of_meals < table->must_eat_count)
+				all_ate = 0;
+		if (all_ate)
+		{
+			pthread_mutex_lock(&table->death_lock);
+			table->death_flag = 1;
+			pthread_mutex_unlock(&table->death_lock);
+		}
+	}
+	pthread_mutex_unlock(&table->eat_lock);
+	return (all_ate);
+}
+
+
+void monitor(t_table *table)
+{
+	int i;
+	while(1)
+	{
+		pthread_mutex_lock(&table->death_lock);
+		if (table->death_flag)
+		{
+			pthread_mutex_unlock(&table->death_lock);
+			break ;
+		}
+		pthread_mutex_unlock(&table->death_lock);
+		i = 0;
+		while(i < table->num_of_philos)
+		{
+			if (check_death(table, i) || check_all_ate(table, i))
+				return ;
+			i++;
+		}
+		usleep(500);
+	}
+	return ;
+}
+
+void philo_eat(t_philo *philo)
 {
 	pthread_mutex_lock(philo->left_fork);
 	pthread_mutex_lock(&philo->table->print_lock);
@@ -21,60 +95,52 @@ void	philo_eat(t_philo *philo)
 	pthread_mutex_lock(philo->right_fork);
 	pthread_mutex_lock(&philo->table->print_lock);
 	philo_print(philo, FORK_MSG);
-	pthread_mutex_unlock(&philo->table->print_lock);
-	pthread_mutex_lock(&philo->table->print_lock);
 	philo_print(philo, EAT_MSG);
 	pthread_mutex_unlock(&philo->table->print_lock);
-	pthread_mutex_lock(&philo->table->eat_lock);
-	philo->num_of_meals++;
-	pthread_mutex_unlock(&philo->table->eat_lock);
 	pthread_mutex_lock(&philo->table->time_lock);
 	philo->last_meal = get_time();
 	pthread_mutex_unlock(&philo->table->time_lock);
+	pthread_mutex_lock(&philo->table->eat_lock);
+	philo->num_of_meals++;
+	pthread_mutex_unlock(&philo->table->eat_lock);
 	ft_usleep(philo->table->time_to_eat, philo->table);
 	pthread_mutex_unlock(philo->right_fork);
 	pthread_mutex_unlock(philo->left_fork);
 }
 
-void	philo_sleep(t_philo *philo)
+void philo_sleep(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->table->print_lock);
 	philo_print(philo, SLEEP_MSG);
 	pthread_mutex_unlock(&philo->table->print_lock);
 	ft_usleep(philo->table->time_to_sleep, philo->table);
 }
-
-void	philo_think(t_philo *philo)
+void philo_think(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->table->print_lock);
 	philo_print(philo, THINK_MSG);
 	pthread_mutex_unlock(&philo->table->print_lock);
 }
 
-void	dining(void *arg)
+void dining(t_philo *philo)
 {
-	t_philo	*philo;
-
-	philo = (t_philo *)arg;
 	if (philo->id % 2 == 0 || philo->id == philo->table->num_of_philos)
 		usleep(1000);
-	while (!philo->table->death_flag)
+	while(1)
 	{
+		if (should_stop(philo))
+			break ;
 		philo_eat(philo);
-		if (philo->table->must_eat_count > 0)
-		{
-			pthread_mutex_lock(&philo->table->eat_lock);
-			if (philo->num_of_meals >= philo->table->must_eat_count)
-			{
-				pthread_mutex_unlock(&philo->table->eat_lock);
-				break ;
-			}
-			pthread_mutex_unlock(&philo->table->eat_lock);
-		}
+		if (should_stop(philo))
+			break ;
 		philo_sleep(philo);
+		if (should_stop(philo))
+			break ;
 		philo_think(philo);
 	}
+	return ;
 }
+
 
 int	start_dining(t_table *table)
 {

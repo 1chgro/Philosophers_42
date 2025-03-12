@@ -6,7 +6,7 @@
 /*   By: olachgue <olachgue@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 02:11:58 by olachgue          #+#    #+#             */
-/*   Updated: 2025/03/09 02:32:52 by olachgue         ###   ########.fr       */
+/*   Updated: 2025/03/11 22:39:05 by olachgue         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ typedef struct s_table
 	pthread_mutex_t	eat_lock;
 	pthread_mutex_t	time_lock;
 	pthread_mutex_t	print_lock;
+	pthread_mutex_t	death_lock;
 	pthread_mutex_t	*forks;
 	t_philo			*philos;
 }	t_table;
@@ -68,7 +69,7 @@ int		check_input(char **s);
 void	destroy_mutexes(t_table *table);
 int		init_table(t_table *table, char **av);
 size_t	get_time(void);
-void	monitor(void *arg);
+void 	monitor(t_table *table);
 int		start_dining(t_table *table);
 int		ft_usleep(size_t time, t_table *table);
 void	philo_print(t_philo *philo, char *message);

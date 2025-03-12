@@ -6,7 +6,7 @@
 /*   By: olachgue <olachgue@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 02:15:06 by olachgue          #+#    #+#             */
-/*   Updated: 2025/03/09 02:15:42 by olachgue         ###   ########.fr       */
+/*   Updated: 2025/03/12 00:41:13 by olachgue         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,12 +65,12 @@ void	destroy_mutexes(t_table *table)
 			pthread_mutex_destroy(&table->forks[i]);
 			i++;
 		}
+		free(table->forks);
 	}
 	pthread_mutex_destroy(&table->print_lock);
 	pthread_mutex_destroy(&table->time_lock);
 	pthread_mutex_destroy(&table->eat_lock);
-	if (table->forks)
-		free(table->forks);
+	pthread_mutex_destroy(&table->death_lock);
 	if (table->philos)
 		free(table->philos);
 }
@@ -82,10 +82,16 @@ int	ft_usleep(size_t time, t_table *table)
 	start = get_time();
 	while ((get_time() - start) < time)
 	{
+		pthread_mutex_lock(&table->death_lock);
 		if (table->death_flag)
+		{
+			pthread_mutex_unlock(&table->death_lock);
 			return (0);
+		}
+		pthread_mutex_unlock(&table->death_lock);
 		usleep(100);
 	}
+
 	return (0);
 }
 

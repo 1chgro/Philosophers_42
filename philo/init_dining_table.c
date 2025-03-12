@@ -6,7 +6,7 @@
 /*   By: olachgue <olachgue@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 02:18:30 by olachgue          #+#    #+#             */
-/*   Updated: 2025/03/09 02:19:59 by olachgue         ###   ########.fr       */
+/*   Updated: 2025/03/12 01:11:31 by olachgue         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,8 @@ int	init_philo_forks(t_table *table)
 	{
 		if (pthread_mutex_init(&table->forks[i], NULL) != 0)
 		{
-			while (--i)
-				pthread_mutex_destroy(&table->forks[i]);
+			while (i > 0)
+				pthread_mutex_destroy(&table->forks[--i]);
 			return (free(table->forks), 0);
 		}
 		i++;
@@ -71,6 +71,8 @@ int	init_table(t_table *table, char **av)
 	if (pthread_mutex_init(&table->time_lock, NULL) != 0)
 		return (0);
 	if (pthread_mutex_init(&table->print_lock, NULL) != 0)
+		return (0);
+	if (pthread_mutex_init(&table->death_lock, NULL) != 0)
 		return (0);
 	if (!init_philo_forks(table))
 		return (0);
