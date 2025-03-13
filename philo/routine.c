@@ -6,7 +6,7 @@
 /*   By: olachgue <olachgue@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 02:53:42 by olachgue          #+#    #+#             */
-/*   Updated: 2025/03/12 22:46:18 by olachgue         ###   ########.fr       */
+/*   Updated: 2025/03/13 00:44:46 by olachgue         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,6 @@ void	philo_eat(t_philo *philo)
 	pthread_mutex_lock(philo->right_fork);
 	pthread_mutex_lock(&philo->table->print_lock);
 	philo_print(philo, FORK_MSG);
-	pthread_mutex_unlock(&philo->table->print_lock);
-	pthread_mutex_lock(&philo->table->print_lock);
 	philo_print(philo, EAT_MSG);
 	pthread_mutex_unlock(&philo->table->print_lock);
 	pthread_mutex_lock(&philo->table->time_lock);

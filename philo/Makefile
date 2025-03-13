@@ -1,8 +1,8 @@
-NAME=philo
+NAME = philo
 
-FLAGS = -Wall -Werror -Wextra -pthread -fsanitize=thread -g
+FLAGS = -Wall -Werror -Wextra -pthread
 
-SRCS= \
+SRCS = \
 		philo.c\
 		parse.c\
 		routine.c\
@@ -10,16 +10,16 @@ SRCS= \
 		philo_utils.c\
 		init_dining_table.c
 		
-OBJS= $(SRCS:.c=.o)
+OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)
 
 $(NAME): $(OBJS) philo.h
 	@cc $(FLAGS) $(OBJS) -o $(NAME)
-	@echo "Done: excutable is ready"
+	@echo "Done: executable is ready"
 
 %.o:%.c 
-	@cc $(FLAGS) -c $< -o $@
+	@cc $(FLAGS) -c $< -o $@ 
 
 clean:
 	@rm -rf $(OBJS)
