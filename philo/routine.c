@@ -6,7 +6,7 @@
 /*   By: olachgue <olachgue@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 02:53:42 by olachgue          #+#    #+#             */
-/*   Updated: 2025/03/13 00:44:46 by olachgue         ###   ########.fr       */
+/*   Updated: 2025/03/13 02:02:57 by olachgue         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	philo_think(t_philo *philo)
 void	dining(t_philo *philo)
 {
 	if (philo->id % 2 == 0 || philo->id == philo->table->num_of_philos)
-		ft_usleep(philo->table->time_to_die / 2, philo->table);
+		ft_usleep(philo->table->time_to_eat / 2, philo->table);
 	while (1)
 	{
 		if (should_stop(philo))
