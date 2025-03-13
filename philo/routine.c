@@ -52,7 +52,7 @@ void	philo_think(t_philo *philo)
 void	dining(t_philo *philo)
 {
 	if (philo->id % 2 == 0 || philo->id == philo->table->num_of_philos)
-		usleep(1000);
+		ft_usleep(philo->table->time_to_die / 2, philo->table);
 	while (1)
 	{
 		if (should_stop(philo))
