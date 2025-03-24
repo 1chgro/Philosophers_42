@@ -55,8 +55,6 @@ void	destroy_mutexes(t_table *table)
 {
 	int	i;
 
-	pthread_mutex_destroy(&table->eat_lock);
-	i = 0;
 	if (table->forks)
 	{
 		i = 0;
